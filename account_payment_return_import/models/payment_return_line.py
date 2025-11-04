@@ -2,7 +2,8 @@
 # Copyright 2016 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class PaymentReturnLine(models.Model):
@@ -15,10 +16,16 @@ class PaymentReturnLine(models.Model):
         help="XML RAW data stored for debugging/check purposes"
     )
 
-    _sql_constraints = [
-        (
-            "unique_import_id",
-            "unique (unique_import_id)",
-            "A payment return transaction can be imported only once!",
-        )
-    ]
+    @api.constrains("unique_import_id")
+    def _check_unique_import_id(self):
+        for record in self:
+            if not record.unique_import_id:
+                continue
+            domain = [
+                ("unique_import_id", "=", record.unique_import_id),
+                ("id", "!=", record.id),
+            ]
+            if self.search_count(domain):
+                raise ValidationError(
+                    "A payment return transaction can be imported only once!"
+                )
