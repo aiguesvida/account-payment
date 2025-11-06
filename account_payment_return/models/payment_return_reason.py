@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
-from odoo.osv import expression
+from odoo.fields import Domain
 
 
 class PaymentReturnReason(models.Model):
@@ -29,8 +29,8 @@ class PaymentReturnReason(models.Model):
             if domain == []:
                 domain = domain_item
             else:
-                if operator in expression.NEGATIVE_TERM_OPERATORS:
-                    domain = expression.AND([domain, domain_item])
+                if operator in Domain.NEGATIVE_TERM_OPERATORS:
+                    domain = Domain.AND([domain, domain_item])
                 else:
-                    domain = expression.OR([domain, domain_item])
+                    domain = Domain.OR([domain, domain_item])
         return domain
