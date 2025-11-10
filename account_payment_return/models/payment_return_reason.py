@@ -24,12 +24,13 @@ class PaymentReturnReason(models.Model):
     @api.model
     def _search_display_name(self, operator, value):
         domain = []
+        negative_ops = getattr(Domain, "NEGATIVE_TERM_OPERATORS", Domain.NEGATIVE_OPERATORS)
         for f_name in self._rec_names_search:
             domain_item = [(f_name, operator, value)]
             if domain == []:
                 domain = domain_item
             else:
-                if operator in Domain.NEGATIVE_TERM_OPERATORS:
+                if operator in negative_ops:
                     domain = Domain.AND([domain, domain_item])
                 else:
                     domain = Domain.OR([domain, domain_item])
