@@ -217,10 +217,17 @@ class PaymentReturnImport(models.TransientModel):
                 raise UserError(
                     self.env._("Can not find the account number %s.") % account_number
                 )
+            journal_id = self._get_journal(bank_account_id)
+            journal = self.env["account.journal"].browse(journal_id)
             payret_vals.update(
                 {
                     "imported_bank_account_id": bank_account_id,
-                    "journal_id": self._get_journal(bank_account_id),
+                    "journal_id": journal_id,
+                    "payment_method_line_id": (
+                        journal.return_payment_method_line_id.id
+                        if journal.return_payment_method_line_id
+                        else False
+                    ),
                 }
             )
             # By now journal and account_number must be known

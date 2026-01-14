@@ -17,3 +17,10 @@ class AccountJournal(models.Model):
         string="Default Charges Partner",
         help="Default partner for charge expenses",
     )
+    return_payment_method_line_id = fields.Many2one(
+        comodel_name="account.payment.method.line",
+        string="Return Payment Method",
+        domain="[('payment_type', '=', 'inbound'), ('journal_id', '=', id)]",
+        help="Default payment method used for payment returns in this journal. "
+        "The account configured in this method will be used for the return entry.",
+    )

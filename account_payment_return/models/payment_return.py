@@ -68,6 +68,11 @@ class PaymentReturn(models.Model):
         domain="[('payment_type', '=', 'inbound'), ('journal_id', '=', journal_id)]",
     )
 
+    @api.onchange("journal_id")
+    def _onchange_journal_id_set_return_method(self):
+        if self.journal_id and not self.payment_method_line_id:
+            self.payment_method_line_id = self.journal_id.return_payment_method_line_id
+
     @api.constrains("line_ids")
     def _check_duplicate_move_line(self):
         def append_error(error_line):
@@ -153,8 +158,12 @@ class PaymentReturn(models.Model):
 
     def _prepare_move_line(self, move, total_amount):
         self.ensure_one()
+        method_line = (
+            self.payment_method_line_id
+            or self.journal_id.return_payment_method_line_id
+        )
         account = (
-            self.payment_method_line_id.payment_account_id
+            method_line.payment_account_id
             or self.journal_id.default_account_id
         )
         if not account:

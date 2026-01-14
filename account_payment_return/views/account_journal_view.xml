@@ -10,6 +10,7 @@
             <field name="default_account_id" position="after">
                 <field name="default_expense_account_id" />
                 <field name="default_expense_partner_id" />
+                <field name="return_payment_method_line_id" />
             </field>
         </field>
     </record>
