@@ -43,7 +43,7 @@ class TestPaymentReturn(BaseCommon):
                     "account.account_payment_method_manual_out"
                 ).id,
                 "journal_id": cls.bank_journal.id,
-                "outstanding_account_id": cls.account.id,
+                "payment_account_id": cls.account.id,
             }
         )
         cls.in_pay_method = cls.env["account.payment.method.line"].create(
@@ -53,7 +53,7 @@ class TestPaymentReturn(BaseCommon):
                     "account.account_payment_method_manual_in"
                 ).id,
                 "journal_id": cls.bank_journal.id,
-                "outstanding_account_id": cls.account.id,
+                "payment_account_id": cls.account.id,
             }
         )
         cls.account_income = cls.env["account.account"].create(
