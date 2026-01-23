@@ -36,6 +36,26 @@ class TestPaymentReturn(BaseCommon):
                 "default_expense_partner_id": cls.partner_expense.id,
             }
         )
+        cls.out_pay_method = cls.env["account.payment.method.line"].create(
+            {
+                "name": "manual",
+                "payment_method_id": cls.env.ref(
+                    "account.account_payment_method_manual_out"
+                ).id,
+                "journal_id": cls.bank_journal.id,
+                "outstanding_account_id": cls.account.id,
+            }
+        )
+        cls.in_pay_method = cls.env["account.payment.method.line"].create(
+            {
+                "name": "manual",
+                "payment_method_id": cls.env.ref(
+                    "account.account_payment_method_manual_in"
+                ).id,
+                "journal_id": cls.bank_journal.id,
+                "outstanding_account_id": cls.account.id,
+            }
+        )
         cls.account_income = cls.env["account.account"].create(
             {
                 "name": "Test income account",

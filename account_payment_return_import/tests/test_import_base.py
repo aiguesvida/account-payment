@@ -32,6 +32,26 @@ class TestImportBase(TestPaymentReturnFile):
                 "bank_account_id": cls.acc_bank.id,
             }
         )
+        cls.env["account.payment.method.line"].create(
+            {
+                "name": "manual",
+                "payment_method_id": cls.env.ref(
+                    "account.account_payment_method_manual_out"
+                ).id,
+                "journal_id": cls.journal.id,
+                "outstanding_account_id": cls.account.id,
+            }
+        )
+        cls.env["account.payment.method.line"].create(
+            {
+                "name": "manual",
+                "payment_method_id": cls.env.ref(
+                    "account.account_payment_method_manual_in"
+                ).id,
+                "journal_id": cls.journal.id,
+                "outstanding_account_id": cls.account.id,
+            }
+        )
         cls.journal.bank_account_id = cls.acc_bank
         cls.journal_sale = cls.env["account.journal"].create(
             {"name": "Test Sale Journal", "code": "SALE", "type": "sale"}
