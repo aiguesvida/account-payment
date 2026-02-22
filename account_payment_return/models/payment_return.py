@@ -114,14 +114,10 @@ class PaymentReturn(models.Model):
     def _compute_total_amount(self):
         return_line_model = self.env["payment.return.line"]
         domain = [("return_id", "in", self.ids)]
-        res = return_line_model.read_group(
-            domain=domain, fields=["return_id", "amount"], groupby=["return_id"]
+        res = return_line_model._read_group(
+            domain=domain, groupby=["return_id"], aggregates=["amount:sum"]
         )
-        lines_dict = {}
-        for dic in res:
-            return_id = dic["return_id"][0]
-            total_amount = dic["amount"]
-            lines_dict[return_id] = total_amount
+        lines_dict = {return_id.id: amount for return_id, amount in res}
         for rec in self:
             rec.total_amount = lines_dict.get(rec.id, 0.0)
 
