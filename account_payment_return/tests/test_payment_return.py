@@ -192,6 +192,8 @@ class TestPaymentReturn(BaseCommon):
 
     def test_find_match_move_line(self):
         self.payment_line.name = "test match move line 001"
+        # Clear move_line_ids on the existing line to avoid duplicate check
+        self.payment_return.line_ids.write({"move_line_ids": [(5, 0, 0)]})
         self.payment_return.write(
             {
                 "line_ids": [
