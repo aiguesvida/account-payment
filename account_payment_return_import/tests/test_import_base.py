@@ -32,14 +32,6 @@ class TestImportBase(TestPaymentReturnFile):
                 "bank_account_id": cls.acc_bank.id,
             }
         )
-        cls.journal.bank_account_id = cls.acc_bank
-        cls.journal_sale = cls.env["account.journal"].create(
-            {"name": "Test Sale Journal", "code": "SALE", "type": "sale"}
-        )
-        cls.partner = cls.env["res.partner"].create({"name": "Test partner"})
-        cls.reason = cls.env["payment.return.reason"].create(
-            {"code": "RTEST", "name": "Reason Test"}
-        )
         cls.account = cls.env["account.account"].create(
             {
                 "name": "Test account",
@@ -67,6 +59,14 @@ class TestImportBase(TestPaymentReturnFile):
                 "journal_id": cls.journal.id,
                 "payment_account_id": cls.account.id,
             }
+        )
+        cls.journal.bank_account_id = cls.acc_bank
+        cls.journal_sale = cls.env["account.journal"].create(
+            {"name": "Test Sale Journal", "code": "SALE", "type": "sale"}
+        )
+        cls.partner = cls.env["res.partner"].create({"name": "Test partner"})
+        cls.reason = cls.env["payment.return.reason"].create(
+            {"code": "RTEST", "name": "Reason Test"}
         )
         cls.account_income = cls.env["account.account"].create(
             {
