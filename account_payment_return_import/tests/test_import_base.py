@@ -40,26 +40,12 @@ class TestImportBase(TestPaymentReturnFile):
                 "reconcile": True,
             }
         )
-        cls.env["account.payment.method.line"].create(
-            {
-                "name": "manual",
-                "payment_method_id": cls.env.ref(
-                    "account.account_payment_method_manual_out"
-                ).id,
-                "journal_id": cls.journal.id,
-                "payment_account_id": cls.account.id,
-            }
-        )
-        cls.env["account.payment.method.line"].create(
-            {
-                "name": "manual",
-                "payment_method_id": cls.env.ref(
-                    "account.account_payment_method_manual_in"
-                ).id,
-                "journal_id": cls.journal.id,
-                "payment_account_id": cls.account.id,
-            }
-        )
+        cls.journal.inbound_payment_method_line_ids.write({
+            "payment_account_id": cls.account.id,
+        })
+        cls.journal.outbound_payment_method_line_ids.write({
+            "payment_account_id": cls.account.id,
+        })
         cls.journal.bank_account_id = cls.acc_bank
         cls.journal_sale = cls.env["account.journal"].create(
             {"name": "Test Sale Journal", "code": "SALE", "type": "sale"}
@@ -108,6 +94,7 @@ class TestImportBase(TestPaymentReturnFile):
                 active_model="account.move", active_ids=cls.invoice.ids
             )
         )
+        payment_register.journal_id = cls.journal
         cls.payment = payment_register.save()._create_payments()
         cls.payment_move = cls.payment.move_id
 

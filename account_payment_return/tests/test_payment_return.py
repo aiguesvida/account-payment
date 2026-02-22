@@ -36,26 +36,12 @@ class TestPaymentReturn(BaseCommon):
                 "default_expense_partner_id": cls.partner_expense.id,
             }
         )
-        cls.out_pay_method = cls.env["account.payment.method.line"].create(
-            {
-                "name": "manual",
-                "payment_method_id": cls.env.ref(
-                    "account.account_payment_method_manual_out"
-                ).id,
-                "journal_id": cls.bank_journal.id,
-                "payment_account_id": cls.account.id,
-            }
-        )
-        cls.in_pay_method = cls.env["account.payment.method.line"].create(
-            {
-                "name": "manual",
-                "payment_method_id": cls.env.ref(
-                    "account.account_payment_method_manual_in"
-                ).id,
-                "journal_id": cls.bank_journal.id,
-                "payment_account_id": cls.account.id,
-            }
-        )
+        cls.bank_journal.inbound_payment_method_line_ids.write({
+            "payment_account_id": cls.account.id,
+        })
+        cls.bank_journal.outbound_payment_method_line_ids.write({
+            "payment_account_id": cls.account.id,
+        })
         cls.account_income = cls.env["account.account"].create(
             {
                 "name": "Test income account",
@@ -98,6 +84,7 @@ class TestPaymentReturn(BaseCommon):
                 active_model="account.move", active_ids=cls.invoice.ids
             )
         )
+        payment_register.journal_id = cls.bank_journal
         cls.payment = payment_register.save()._create_payments()
         cls.payment_move = cls.payment.move_id
         cls.payment_line = cls.payment_move.line_ids.filtered(
