@@ -22,25 +22,34 @@ class TestPaymentReturn(BaseCommon):
             {
                 "name": "Test account",
                 "code": "TEST",
-                "account_type": "asset_current",
+                "account_type": "asset_receivable",
                 "reconcile": True,
             }
         )
-        cls.partner_expense = cls.env["res.partner"].create({"name": "PE"})
+        cls.bank_account = cls.env["account.account"].create(
+            {
+                "name": "Test Bank Account",
+                "code": "TBANK",
+                "account_type": "asset_cash",
+                "reconcile": False,
+            }
+        )
+        cls.partner_expense = cls.env["res.partner"].create({"name": "Test expense"})
         cls.bank_journal = cls.env["account.journal"].create(
             {
                 "name": "Test Bank Journal",
                 "code": "BANKTEST",
                 "type": "bank",
+                "default_account_id": cls.bank_account.id,
                 "default_expense_account_id": cls.account.id,
                 "default_expense_partner_id": cls.partner_expense.id,
             }
         )
         cls.bank_journal.inbound_payment_method_line_ids.write({
-            "payment_account_id": cls.account.id,
+            "payment_account_id": cls.bank_account.id,
         })
         cls.bank_journal.outbound_payment_method_line_ids.write({
-            "payment_account_id": cls.account.id,
+            "payment_account_id": cls.bank_account.id,
         })
         cls.account_income = cls.env["account.account"].create(
             {
@@ -49,7 +58,11 @@ class TestPaymentReturn(BaseCommon):
                 "account_type": "income_other",
             }
         )
-        cls.partner = cls.env["res.partner"].create({"name": "Test"})
+        cls.partner = cls.env["res.partner"].create({
+            "name": "Test",
+            "property_account_receivable_id": cls.account.id,
+            "property_account_payable_id": cls.account.id,
+        })
         cls.invoice = cls.env["account.move"].create(
             {
                 "move_type": "out_invoice",

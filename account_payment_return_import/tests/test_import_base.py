@@ -40,17 +40,29 @@ class TestImportBase(TestPaymentReturnFile):
                 "reconcile": True,
             }
         )
+        cls.bank_account = cls.env["account.account"].create(
+            {
+                "name": "Test Bank Account",
+                "code": "TBANK",
+                "account_type": "asset_cash",
+                "reconcile": False,
+            }
+        )
         cls.journal.inbound_payment_method_line_ids.write({
-            "payment_account_id": cls.account.id,
+            "payment_account_id": cls.bank_account.id,
         })
         cls.journal.outbound_payment_method_line_ids.write({
-            "payment_account_id": cls.account.id,
+            "payment_account_id": cls.bank_account.id,
         })
         cls.journal.bank_account_id = cls.acc_bank
         cls.journal_sale = cls.env["account.journal"].create(
             {"name": "Test Sale Journal", "code": "SALE", "type": "sale"}
         )
-        cls.partner = cls.env["res.partner"].create({"name": "Test partner"})
+        cls.partner = cls.env["res.partner"].create({
+            "name": "Test partner",
+            "property_account_receivable_id": cls.account.id,
+            "property_account_payable_id": cls.account.id,
+        })
         cls.reason = cls.env["payment.return.reason"].create(
             {"code": "RTEST", "name": "Reason Test"}
         )
