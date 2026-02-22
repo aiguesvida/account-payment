@@ -90,6 +90,8 @@ class TestPaymentReturn(BaseCommon):
         cls.payment_line = cls.payment_move.line_ids.filtered(
             lambda x: x.account_id.account_type == "asset_receivable"
         )
+        if len(cls.payment_line) > 1:
+            cls.payment_line = cls.payment_line[0]
         # Create payment return
         cls.payment_return = cls.env["payment.return"].create(
             {
